@@ -2,4 +2,5 @@
 <resources>
     <dimen name="control_margin">8dp</dimen>
     <dimen name="textview_text_size">32sp</dimen>
+    <dimen name="control_size">24dp</dimen>
 </resources>

@@ -8,26 +8,27 @@
     tools:context=".MainActivity">
 
     <Button
-        android:id="@+id/button_questions"
+        android:id="@+id/btn_questions"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toStartOf="@+id/textview_questions"
+        app:layout_constraintEnd_toStartOf="@+id/tv_questions"
         app:layout_constraintHorizontal_weight="3"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="@string/button_questions_text"/>
 
     <TextView
-        android:id="@+id/textview_questions"
+        android:id="@+id/tv_questions"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/text_nulis"
         android:textAlignment="center"
         android:textSize="@dimen/textview_text_size"
-        app:layout_constraintBottom_toTopOf="@id/textview_questions"
+        app:layout_constraintBottom_toTopOf="@id/tv_questions"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_weight="1"
-        app:layout_constraintStart_toEndOf="@id/button_questions"
-        app:layout_constraintTop_toTopOf="@id/button_questions" />
+        app:layout_constraintStart_toEndOf="@id/btn_questions"
+        app:layout_constraintTop_toTopOf="@id/btn_questions" />
 
 
 </android.support.constraint.ConstraintLayout>

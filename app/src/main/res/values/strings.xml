@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">TestDecisions</string>
     <string name="text_nulis">0</string>
+    <string name="descriptionButtonAdd">Add new question</string>
+    <string name="button_questions_text">Questions</string>
 </resources>
