@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.widget.ImageButton
 import android.widget.TextView
 import com.debugg3r.android.testdecisions.R
 import com.debugg3r.android.testdecisions.data.TextItem
@@ -17,26 +16,28 @@ enum class TextItemViewType(value: Int) {
     BUTTON(1), TEXT(2), EDITOR (3)
 }
 
-class TextItemListAdapter(var itemList: List<TextItem>): RecyclerView.Adapter<TextItemListAdapter.ViewHolder>(),
-        TextView.OnEditorActionListener, View.OnClickListener {
+class TextItemListAdapter: RecyclerView.Adapter<TextItemListAdapter.ViewHolder> {
+    var presenter:QuestionPresenterInterface?
+
+    constructor(presenter: QuestionPresenterInterface) {
+
+        this.presenter = presenter
+    }
 
     val LOG_TAG = this::class.java.canonicalName
 
     var currentEditing: Int? = null
 
-    fun changeItemList(newItemList: List<TextItem>) {
-        itemList = newItemList
-        notifyDataSetChanged()
-    }
-
     override fun onBindViewHolder(holder: TextItemListAdapter.ViewHolder, position: Int) {
-        Log.d(LOG_TAG, "list position: " + position + " with list size: " + itemList.size)
+        val questionCount: Int = presenter?.getQuestionCount() ?: 0//if (presenter == null) 0 else
 
-        var targetVisibility = if (position == itemList.size) View.VISIBLE else View.GONE
+        Log.d(LOG_TAG, "list position: ${position} with list size: ${questionCount}")
+
+        var targetVisibility = if (position == presenter?.getQuestionCount()) View.VISIBLE else View.GONE
         if (holder.btn_add.visibility != targetVisibility)
                 holder.btn_add.visibility = targetVisibility
 
-        targetVisibility = if (position < itemList.size && position != currentEditing) View.VISIBLE else View.GONE
+        targetVisibility = if (position < questionCount && position != currentEditing) View.VISIBLE else View.GONE
         if (holder.tv_item.visibility != targetVisibility)
             holder.tv_item.visibility = targetVisibility
 
@@ -44,15 +45,15 @@ class TextItemListAdapter(var itemList: List<TextItem>): RecyclerView.Adapter<Te
         if (holder.et_item.visibility != targetVisibility)
             holder.et_item.visibility = targetVisibility
 
-        if (position < itemList.size) {
-            holder.et_item.setText(itemList.get(position).text)
-            holder.tv_item.setText(itemList.get(position).text)
+        if (position < questionCount) {
+            holder.et_item.setText(presenter?.getQuestion(position)?.text)
+            holder.tv_item.setText(presenter?.getQuestion(position)?.text)
         }
     }
 
     override fun getItemViewType(position: Int): Int {
-        if (position == itemList.size)
-            return TextItemViewType.BUTTON.ordinal
+//        if (position == itemList.size)
+//            return TextItemViewType.BUTTON.ordinal
 
         return TextItemViewType.TEXT.ordinal
     }
@@ -61,14 +62,16 @@ class TextItemListAdapter(var itemList: List<TextItem>): RecyclerView.Adapter<Te
         val layoutInflater = LayoutInflater.from(parent.context)
         val view = layoutInflater.inflate(R.layout.layout_list_item_addnew, parent, false)
 
-        view.et_text_item.setOnEditorActionListener(this)
-        view.tv_text_item.setOnClickListener(this)
+        view.et_text_item.setOnEditorActionListener{ view, actionId, event -> onEditorAction(view, actionId, event) }
+        view.tv_text_item.setOnClickListener{ view -> onClick(view) }
 
         return ViewHolder(view)
     }
 
     override fun getItemCount(): Int {
-        return itemList.size + 1
+//        if (presenter == null)
+//            return 1
+        return 1 + (presenter?.getQuestionCount() ?: 0)
     }
 
     class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
@@ -77,14 +80,14 @@ class TextItemListAdapter(var itemList: List<TextItem>): RecyclerView.Adapter<Te
         val et_item = itemView.et_text_item
     }
 
-    override fun onEditorAction(view: TextView, actionId: Int, event: KeyEvent): Boolean {
+    fun onEditorAction(view: TextView, actionId: Int, event: KeyEvent): Boolean {
         if (actionId == EditorInfo.IME_ACTION_DONE) {
             val position: Int? = currentEditing
             currentEditing = null
 
             if (position != null) {
-                val question = itemList.get(position)
-                question.text = view.text as String
+                val question = presenter?.getQuestion(position)
+                question?.text = view.text as String
                 notifyItemChanged(position)
             }
             return true
@@ -92,7 +95,7 @@ class TextItemListAdapter(var itemList: List<TextItem>): RecyclerView.Adapter<Te
         return false
     }
 
-    override fun onClick(view: View?) {
+    fun onClick(view: View) {
 
     }
 

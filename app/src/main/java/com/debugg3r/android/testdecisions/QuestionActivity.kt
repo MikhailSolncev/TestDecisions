@@ -6,10 +6,17 @@ import android.support.v7.widget.LinearLayoutManager
 import com.debugg3r.android.testdecisions.data.Answer
 import com.debugg3r.android.testdecisions.data.Question
 import com.debugg3r.android.testdecisions.data.TextItem
+import com.debugg3r.android.testdecisions.ui.QuestionPresenter
+import com.debugg3r.android.testdecisions.ui.QuestionPresenterInterface
+import com.debugg3r.android.testdecisions.ui.QuestrionActivityInterface
 import com.debugg3r.android.testdecisions.ui.TextItemListAdapter
 import kotlinx.android.synthetic.main.activity_question.*
 
-class QuestionActivity : AppCompatActivity() {
+class QuestionActivity : AppCompatActivity(), QuestrionActivityInterface {
+
+    var presenter: QuestionPresenterInterface? = null
+    var questionAdapter: TextItemListAdapter? = null
+    var answerAdapter: TextItemListAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -17,21 +24,43 @@ class QuestionActivity : AppCompatActivity() {
 
         var layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
-        var itemList = ArrayList<TextItem>()
-        itemList.add(Question("Do you have a cat?"))
-        itemList.add(Question("Do you like your cat?"))
-        itemList.add(Question("Do you obey your cat?"))
-        itemList.add(Question("Are you panda?"))
+        presenter = QuestionPresenter.instance
+
         rv_questions.layoutManager = layoutManager
-        rv_questions.adapter = TextItemListAdapter(itemList)
+        questionAdapter = TextItemListAdapter(presenter ?: QuestionPresenter())
+        rv_questions.adapter = questionAdapter
 
-        layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+//        layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+//
+//        itemList = ArrayList()
+//        itemList.add(Answer("Yes"))
+//        itemList.add(Answer("No"))
+//        rv_answers.layoutManager = layoutManager
+//        answerAdapter = TextItemListAdapter(itemList)
+//        rv_answers.adapter = answerAdapter
 
-        itemList = ArrayList()
-        itemList.add(Answer("Yes"))
-        itemList.add(Answer("No"))
-        rv_answers.layoutManager = layoutManager
-        rv_answers.adapter = TextItemListAdapter(itemList)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        presenter = null
+    }
+
+    override fun onResume() {
+        super.onResume()
+        presenter = QuestionPresenter.instance
+        presenter?.bind(this)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+    }
+
+    override fun updateQuestions() {
+
+    }
+
+    override fun updateAnswers() {
 
     }
 }

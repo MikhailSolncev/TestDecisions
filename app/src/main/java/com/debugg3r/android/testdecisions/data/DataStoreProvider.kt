@@ -2,33 +2,52 @@ package com.debugg3r.android.testdecisions.data
 
 import java.util.*
 import kotlin.IndexOutOfBoundsException
+import kotlin.collections.HashMap
 
-class DataStoreProvider(): DataStore {
+open class DataStoreProvider() : DataStore  {
+    private val questionList = HashMap<String, Question>()
 
-    private val questionList = LinkedList<Question>()
+    private object Holder {val instance = DataStoreProvider() }
 
-    override fun getQuestions(): List<Question> {
-        return questionList.clone() as List<Question>
+    companion object {
+
+        val instance: DataStore by lazy { Holder.instance }
+    }
+
+    override fun getQuestions(): Collection<Question> {
+        return questionList.values //as Collection<Question>
+    }
+
+    override fun getQuestion(uid: String): Question {
+        if (!questionList.containsKey(uid))
+            throw IndexOutOfBoundsException("Can't find question by uid '{$uid}'")
+        return questionList.get(uid)!!
     }
 
     override fun getQuestion(position: Int): Question {
-        if (position > questionList.count())
-            throw IndexOutOfBoundsException()
-        return questionList.get(position)
+        if (position >= questionList.count())
+            throw IndexOutOfBoundsException("Can't find question on position '{$position}'")
+        return questionList.values.elementAt(position)
     }
 
-    override fun addQuestion(question: Question) {
-        if (findQuestion(question)) return
-        questionList.add(question)
+    override fun addQuestion(question: Question): String {
+        if (!findQuestion(question))
+            questionList.put(question.uid, question)
+        return question.uid
+    }
+
+    override fun addQuestion(text: String): Question {
+        val question = Question(text)
+        questionList.put(question.uid, question)
+        return question
     }
 
     override fun findQuestion(question: Question): Boolean {
-        var result = false
-        for (element in questionList) {
-            if (question.text == element.text)
-                result = true
-        }
-        return result
+        return questionList.containsKey(question.uid)
+    }
+
+    override fun findQuestion(uid: String): Boolean {
+        return questionList.containsKey(uid)
     }
 
     override fun getCount(): Int {
@@ -36,12 +55,13 @@ class DataStoreProvider(): DataStore {
     }
 
     override fun removeQuestion(question: Question) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        if (!questionList.containsKey(question.uid))
+            throw IndexOutOfBoundsException("Can't find question by uid '{$question.uid}'")
+        questionList.remove(question.uid)
     }
 
-    override fun removeQuestion(position: Int) {
-        if (position > questionList.count())
-            throw IndexOutOfBoundsException()
+    override fun removeQuestion(uid: String) {
+        questionList.remove(uid)
     }
 
 }
