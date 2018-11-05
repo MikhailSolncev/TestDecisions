@@ -18,12 +18,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
+        android:textSize="@dimen/textview_text_size"
         android:id="@+id/tv_text_item"/>
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
+        android:inputType="text"
+        android:imeOptions="actionDone"
+        android:textSize="@dimen/textview_text_size"
+        android:maxLines="1"
         android:id="@+id/et_text_item"/>
 
 </LinearLayout>
