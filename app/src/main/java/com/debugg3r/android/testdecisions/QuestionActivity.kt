@@ -3,20 +3,14 @@ package com.debugg3r.android.testdecisions
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
-import com.debugg3r.android.testdecisions.data.Answer
-import com.debugg3r.android.testdecisions.data.Question
-import com.debugg3r.android.testdecisions.data.TextItem
-import com.debugg3r.android.testdecisions.ui.QuestionPresenter
-import com.debugg3r.android.testdecisions.ui.QuestionPresenterInterface
-import com.debugg3r.android.testdecisions.ui.QuestrionActivityInterface
-import com.debugg3r.android.testdecisions.ui.TextItemListAdapter
+import com.debugg3r.android.testdecisions.ui.*
 import kotlinx.android.synthetic.main.activity_question.*
 
 class QuestionActivity : AppCompatActivity(), QuestrionActivityInterface {
 
     var presenter: QuestionPresenterInterface? = null
-    var questionAdapter: TextItemListAdapter? = null
-    var answerAdapter: TextItemListAdapter? = null
+    var questionAdapter: QuestionListAdapter? = null
+    var answerAdapter: AnswerListAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,18 +21,15 @@ class QuestionActivity : AppCompatActivity(), QuestrionActivityInterface {
         presenter = QuestionPresenter.instance
 
         rv_questions.layoutManager = layoutManager
-        questionAdapter = TextItemListAdapter(presenter ?: QuestionPresenter())
+        questionAdapter = QuestionListAdapter(presenter ?: QuestionPresenter())
         rv_questions.adapter = questionAdapter
 
-//        layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-//
-//        itemList = ArrayList()
-//        itemList.add(Answer("Yes"))
-//        itemList.add(Answer("No"))
-//        rv_answers.layoutManager = layoutManager
-//        answerAdapter = TextItemListAdapter(itemList)
-//        rv_answers.adapter = answerAdapter
+        layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        rv_answers.layoutManager = layoutManager
+        answerAdapter = AnswerListAdapter(presenter ?: QuestionPresenter())
+        rv_answers.adapter = answerAdapter
 
+        questionAdapter?.answerListAdapter = answerAdapter
     }
 
     override fun onPause() {

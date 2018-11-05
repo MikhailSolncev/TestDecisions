@@ -8,11 +8,12 @@
     android:layout_margin="@dimen/control_margin">
 
     <ImageButton
+        android:id="@+id/btn_add_text_item"
         android:layout_width="@dimen/control_size"
         android:layout_height="@dimen/control_size"
-        tools:src="@drawable/ic_add_black_24dp"
-        android:id="@+id/btn_add_text_item"
-        android:contentDescription="@string/descriptionButtonAdd"/>
+        android:contentDescription="@string/descriptionButtonAdd"
+        android:src="@drawable/ic_add_black_24dp"
+        tools:src="@drawable/ic_add_black_24dp" />
 
     <TextView
         android:layout_width="match_parent"

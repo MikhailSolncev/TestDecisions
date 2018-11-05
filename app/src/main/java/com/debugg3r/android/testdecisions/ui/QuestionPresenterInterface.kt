@@ -1,5 +1,6 @@
 package com.debugg3r.android.testdecisions.ui
 
+import com.debugg3r.android.testdecisions.data.Answer
 import com.debugg3r.android.testdecisions.data.Question
 
 interface QuestionPresenterInterface {
@@ -9,4 +10,12 @@ interface QuestionPresenterInterface {
     fun destroy()
     fun getQuestionCount(): Int
     fun getQuestion(position: Int): Question
+    fun getQuestion(uid: String): Question
+    fun addQuestion(question: Question)
+    fun removeQuestion(question: Question)
+
+    fun getAnswersCount(question: Question?): Int
+    fun addAnswer(question: Question?, answer: Answer)
+    fun removeAnswer(question: Question?, answer: Answer)
+    fun getAnswer(question: Question?, position: Int): Answer
 }

@@ -2,4 +2,5 @@
 <resources>
     <integer name="tag_holder">11</integer>
     <integer name="tag_uid">13</integer>
+    <integer name="tag_onBind">17</integer>
 </resources>

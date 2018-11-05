@@ -4,7 +4,10 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 data class Question(override var text: String): TextItem {
-    private val answers: List<Answer> = ArrayList<Answer>()
+    private val answers: ArrayList<Answer> = ArrayList()
     override val uid: String = UUID.randomUUID().toString()
     fun getAnswers(): List<Answer> = answers
+    fun addAnswer(answer: Answer) {
+        answers.add(answer)
+    }
 }
