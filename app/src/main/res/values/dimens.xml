@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="control_margin">8dp</dimen>
-    <dimen name="textview_text_size">32sp</dimen>
-    <dimen name="control_size">24dp</dimen>
+    <dimen name="textview_text_size">16sp</dimen>
+    <dimen name="control_size">32dp</dimen>
 </resources>
