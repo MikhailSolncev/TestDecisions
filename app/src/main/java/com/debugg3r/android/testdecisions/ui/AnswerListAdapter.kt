@@ -33,7 +33,8 @@ class AnswerListAdapter: RecyclerView.Adapter<AnswerListAdapter.ViewHolder> {
 
     override fun onBindViewHolder(holder: AnswerListAdapter.ViewHolder, position: Int) {
         if (position < 0) return
-        val answersCount: Int = presenter?.getAnswersCount(question) ?: 0//if (presenter == null) 0 else
+
+        val answersCount: Int = presenter?.getAnswersCount(question) ?: 0
 
         Log.d(LOG_TAG, "list position: ${position} with list size: ${answersCount}")
 
@@ -45,6 +46,16 @@ class AnswerListAdapter: RecyclerView.Adapter<AnswerListAdapter.ViewHolder> {
         holder.et_item.setTag(R.integer.tag_uid, answer?.uid)
         holder.btn_add.setTag(R.integer.tag_holder, holder)
         holder.btn_add.setTag(R.integer.tag_uid, answer?.uid)
+
+        updateVisibility(holder)
+    }
+
+    private fun updateVisibility(holder: ViewHolder) {
+        val position = holder.adapterPosition
+        if (position < 0) return
+
+        val answersCount: Int = presenter?.getAnswersCount(question) ?: 0
+        val answer: Answer? = if (position < answersCount) presenter?.getAnswer(question, position) else null
 
         var targetVisibility = if (position == answersCount) View.VISIBLE else View.GONE
         if (holder.btn_add.visibility != targetVisibility)
@@ -70,8 +81,8 @@ class AnswerListAdapter: RecyclerView.Adapter<AnswerListAdapter.ViewHolder> {
         if (holder.et_item.visibility == View.VISIBLE) {
             holder.et_item.setTag(R.integer.tag_onBind, true)
             holder.et_item.requestFocus()
-            val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm?.showSoftInput(holder.et_item, InputMethodManager.SHOW_IMPLICIT)
+            val imm = context?.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+            imm?.showSoftInput(holder.et_item, SHOW_IMPLICIT)
 
             holder.et_item.setOnEditorActionListener { view, actionId, event -> onEditorAction(view, actionId, event) }
             holder.et_item.setOnFocusChangeListener { view, hasFocus -> onFocusChange(view, hasFocus) }
@@ -82,7 +93,6 @@ class AnswerListAdapter: RecyclerView.Adapter<AnswerListAdapter.ViewHolder> {
             holder.et_item.setText(answer?.text)
             holder.tv_item.setText(answer?.text)
         }
-
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -102,11 +112,12 @@ class AnswerListAdapter: RecyclerView.Adapter<AnswerListAdapter.ViewHolder> {
 
         val holder = view.getTag(R.integer.tag_holder) as ViewHolder
         if (view.visibility == View.VISIBLE && !hasFocus) {
-            try {
-                notifyItemChanged(holder.adapterPosition)
-            } catch (e: Exception) {
-                // it's ok
-            }
+            //try {
+                //notifyItemChanged(holder.adapterPosition)
+                updateVisibility(holder)
+//            } catch (e: Exception) {
+//                // it's ok
+//            }
         }
     }
 

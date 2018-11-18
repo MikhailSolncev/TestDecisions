@@ -10,4 +10,12 @@ data class Question(override var text: String): TextItem {
     fun addAnswer(answer: Answer) {
         answers.add(answer)
     }
+
+    fun removeAnswer(uid: String) {
+        for (answer in answers)
+            if (answer.uid == uid) {
+                answers.remove(answer)
+                break
+            }
+    }
 }

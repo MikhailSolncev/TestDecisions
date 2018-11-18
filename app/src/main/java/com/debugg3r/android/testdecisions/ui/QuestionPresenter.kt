@@ -45,6 +45,10 @@ class QuestionPresenter : QuestionPresenterInterface{
         dataStore.removeQuestion(question)
     }
 
+    override fun removeQuestion(uid: String) {
+        dataStore.removeQuestion(uid)
+    }
+
     override fun getAnswersCount(question: Question?): Int {
         return question?.getAnswers()?.size ?: 0
     }
@@ -62,6 +66,9 @@ class QuestionPresenter : QuestionPresenterInterface{
         return question?.getAnswers()?.get(position) ?: Answer("")
     }
 
+    override fun removeAnswer(question: Question?, uid: String) {
+        question?.removeAnswer(uid)
+    }
     override fun destroy() {
 
     }
