@@ -4,7 +4,7 @@ import java.util.*
 import kotlin.IndexOutOfBoundsException
 import kotlin.collections.HashMap
 
-open class DataStoreProvider() : DataStore  {
+open class DataStoreProvider : DataStore  {
     private val questionMap = HashMap<String, Question>()
     private val questionList = LinkedList<Question>()
 
