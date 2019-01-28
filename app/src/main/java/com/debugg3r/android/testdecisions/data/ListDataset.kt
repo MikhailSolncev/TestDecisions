@@ -6,4 +6,5 @@ interface ListDataset {
     fun deleteElement(position: Int): Int
     fun getElement(position: Int): TextItem
     fun newItem(text: String): TextItem
+    fun changeText(position: Int)
 }

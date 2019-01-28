@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 @RunWith(AndroidJUnit4.class)
-public class ExampleInstrumentedTest {
+public class DbHelperTest {
 
     private static final String LOG_TAG = "INDUSTRIAL_TST";
     private final Context mContext = InstrumentationRegistry.getTargetContext();
@@ -80,6 +80,7 @@ public class ExampleInstrumentedTest {
         assertTrue("Database was not created correctly", cursor.moveToFirst());
     }
 
+    @Test
     public void insertAnswerRecord() {
         SQLiteOpenHelper helper = new DbHelper(mContext);
         SQLiteDatabase database = helper.getWritableDatabase();

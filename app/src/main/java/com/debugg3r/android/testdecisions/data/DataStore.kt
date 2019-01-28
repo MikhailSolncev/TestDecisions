@@ -7,7 +7,6 @@ interface DataStore {
     fun addQuestion(question: Question): String
     fun addQuestion(text: String): Question
     fun getCount(): Int
-    fun findQuestion(uid: String): Boolean
     fun findQuestion(question: Question): Boolean
     fun removeQuestion(question: Question)
     fun removeQuestion(uid: String)

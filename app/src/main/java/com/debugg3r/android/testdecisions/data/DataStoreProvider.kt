@@ -49,10 +49,6 @@ open class DataStoreProvider : DataStore  {
         return questionMap.containsKey(question.uid)
     }
 
-    override fun findQuestion(uid: String): Boolean {
-        return questionMap.containsKey(uid)
-    }
-
     override fun getCount(): Int {
         return questionList.size
     }

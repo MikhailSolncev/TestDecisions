@@ -22,7 +22,7 @@ class DbHelper(val context: Context): SQLiteOpenHelper(context, DATABASE_NAME, n
         sqlQuery = "CREATE TABLE " + DbContract.Answers.TABLE_NAME + " (" +
                 DbContract.Answers.COLUMN_ID + " TEXT PRIMARY KEY, " +
                 DbContract.Answers.COLUMN_QUESTION + " TEXT NOT NULL, " +
-                DbContract.Questions.COLUMN_TEXT + " TEXT NOT NULL " +
+                DbContract.Answers.COLUMN_TEXT + " TEXT NOT NULL " +
                 ");"
         sqLiteDatabase.execSQL(sqlQuery)
     }
@@ -30,7 +30,7 @@ class DbHelper(val context: Context): SQLiteOpenHelper(context, DATABASE_NAME, n
     override fun onUpgrade(sqLiteDatabase: SQLiteDatabase, p1: Int, p2: Int) {
         if (p1 == 1 && p2 > p1) {
             sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + DbContract.Questions.TABLE_NAME)
-            sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + DbContract.Questions.TABLE_NAME)
+            sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + DbContract.Answers.TABLE_NAME)
             onCreate(sqLiteDatabase)
         }
     }
