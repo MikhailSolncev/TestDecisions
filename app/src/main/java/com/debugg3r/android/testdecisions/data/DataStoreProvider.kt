@@ -4,7 +4,7 @@ import java.util.*
 import kotlin.IndexOutOfBoundsException
 import kotlin.collections.HashMap
 
-open class DataStoreProvider() : DataStore  {
+open class DataStoreProvider : DataStore  {
     private val questionMap = HashMap<String, Question>()
     private val questionList = LinkedList<Question>()
 
@@ -47,10 +47,6 @@ open class DataStoreProvider() : DataStore  {
 
     override fun findQuestion(question: Question): Boolean {
         return questionMap.containsKey(question.uid)
-    }
-
-    override fun findQuestion(uid: String): Boolean {
-        return questionMap.containsKey(uid)
     }
 
     override fun getCount(): Int {
