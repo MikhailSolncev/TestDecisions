@@ -111,4 +111,28 @@ class DataStoreDb(var mContext: Context): DataStore {
                 "${DbContract.Answers.COLUMN_ID} = ?",
                 arrayOf(answer.uid))
     }
+
+    override fun changeQuestion(question: Question, text: String) {
+        changeQuestion(question.uid, text)
+    }
+
+    override fun changeQuestion(uid: String, text: String) {
+        questions.first { it.uid == uid }.text = text
+        val sql = "update ${DbContract.Questions.TABLE_NAME} " +
+                "set ${DbContract.Questions.COLUMN_TEXT} = '$text' " +
+                "where ${DbContract.Questions.COLUMN_ID} = ? "
+        sqLiteDatabase.execSQL(sql, arrayOf(uid))
+    }
+
+    override fun changeAnswer(question: Question, answer: Answer, text: String) {
+        changeAnswer(question.uid, answer.uid, text)
+    }
+
+    override fun changeAnswer(uidQuestion: String, uidAnswer: String, text: String) {
+        questions.first { it.uid == uidQuestion }.getAnswers().first { it.uid == uidAnswer }.text = text
+        val sql = "update ${DbContract.Answers.TABLE_NAME} " +
+                "set ${DbContract.Answers.COLUMN_TEXT} = '$text' " +
+                "where ${DbContract.Answers.COLUMN_ID} = ? "
+        sqLiteDatabase.execSQL(sql, arrayOf(uidAnswer))
+    }
 }

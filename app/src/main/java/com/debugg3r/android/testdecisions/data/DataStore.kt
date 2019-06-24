@@ -10,4 +10,8 @@ interface DataStore {
     fun findQuestion(question: Question): Boolean
     fun removeQuestion(question: Question)
     fun removeQuestion(uid: String)
+    fun changeQuestion(question: Question, text: String)
+    fun changeQuestion(uid: String, text: String)
+    fun changeAnswer(question: Question, answer: Answer, text: String)
+    fun changeAnswer(uidQuestion: String, uidAnswer: String, text: String)
 }

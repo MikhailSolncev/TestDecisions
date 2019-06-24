@@ -11,17 +11,17 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import com.debugg3r.android.testdecisions.R
-import com.debugg3r.android.testdecisions.data.Answer
 import com.debugg3r.android.testdecisions.data.ListDataset
 import com.debugg3r.android.testdecisions.data.TextItem
 import kotlinx.android.synthetic.main.layout_list_item_addnew.view.*
 
-class TextListAdapterInterface(private var dataset: ListDataset) : RecyclerView.Adapter<TextListAdapterInterface.ViewHolder>() {
+class TextListAdapter(var dataset: ListDataset) : RecyclerView.Adapter<TextListAdapter.ViewHolder>() {
 
     val LOG_TAG: String = this::class.java.name
 
     var currentEditing: Int = -1
     var context: Context? = null
+    val command: Command? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         context = parent.context
@@ -108,7 +108,6 @@ class TextListAdapterInterface(private var dataset: ListDataset) : RecyclerView.
         dropEditing()
 
         var element: TextItem = dataset.newItem("")
-        //presenter?.addAnswer(question, answer)
 
         val holder = view.getTag(R.integer.tag_holder) as AnswerListAdapter.ViewHolder
         currentEditing = holder.adapterPosition
@@ -122,7 +121,7 @@ class TextListAdapterInterface(private var dataset: ListDataset) : RecyclerView.
 
     fun onLongClick(view: View): Boolean {
         dropEditing()
-        val holder = view.getTag(R.integer.tag_holder) as TextListAdapterInterface.ViewHolder
+        val holder = view.getTag(R.integer.tag_holder) as TextListAdapter.ViewHolder
         currentEditing = holder.adapterPosition
         Log.d(LOG_TAG, "Long click performed")
         if (currentEditing >= 0)
@@ -156,10 +155,12 @@ class TextListAdapterInterface(private var dataset: ListDataset) : RecyclerView.
     private fun onFocusChange(view: View, hasFocus: Boolean) {
         if (view.getTag(R.integer.tag_onBind) as Boolean == true) return
 
-        val holder = view.getTag(R.integer.tag_holder) as TextListAdapterInterface.ViewHolder
+        val holder = view.getTag(R.integer.tag_holder) as TextListAdapter.ViewHolder
         if (view.visibility == View.VISIBLE && !hasFocus) {
             updateVisibility(holder)
         }
     }
+
+
 
 }

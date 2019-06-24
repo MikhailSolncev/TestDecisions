@@ -5,6 +5,7 @@ import kotlin.IndexOutOfBoundsException
 import kotlin.collections.HashMap
 
 open class DataStoreProvider : DataStore  {
+
     private val questionMap = HashMap<String, Question>()
     private val questionList = LinkedList<Question>()
 
@@ -67,6 +68,22 @@ open class DataStoreProvider : DataStore  {
                 questionList.remove(question)
                 break
             }
+    }
+
+    override fun changeQuestion(question: Question, text: String) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun changeQuestion(uid: String, text: String) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun changeAnswer(question: Question, answer: Answer, text: String) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun changeAnswer(uidQuestion: String, uidAnswer: String, text: String) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
 }
