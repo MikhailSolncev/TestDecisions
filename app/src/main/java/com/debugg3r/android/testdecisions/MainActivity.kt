@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.debugg3r.android.testdecisions.ui.mainmenu.MenuFragment
+import com.debugg3r.android.testdecisions.ui.questions.QuestionDetailFragment
 import com.debugg3r.android.testdecisions.ui.questions.QuestionsFragment
 
 class MainActivity : AppCompatActivity(), MainActivityActionListener {
@@ -18,18 +19,30 @@ class MainActivity : AppCompatActivity(), MainActivityActionListener {
         }
     }
 
-    override fun performAction(action: String) {
+    override fun performAction(action: String, parameter: String) {
         Toast.makeText(this, "Wow! Button \"$action\" pressed!", Toast.LENGTH_SHORT).show()
-        if (action == "questions") {
-            supportFragmentManager.inTransaction {
-                addToBackStack("main")
-                replace(R.id.main_frame, QuestionsFragment())
-            }
 
+        when (action) {
+            "questions" -> {
+                supportFragmentManager.inTransaction {
+                    addToBackStack("main")
+                    replace(R.id.main_frame, QuestionsFragment())
+                }
+            }
+            "question" -> {
+                supportFragmentManager.inTransaction {
+                    addToBackStack("questions")
+                    replace(R.id.main_frame, QuestionDetailFragment.newInstance(parameter))
+                }
+            }
+            "answer" -> {
+
+            }
+            else -> {}
         }
     }
 }
 
 interface MainActivityActionListener {
-    fun performAction(action: String)
+    fun performAction(action: String, parameter: String)
 }

@@ -26,7 +26,7 @@ class MenuFragment : Fragment() {
 
         main_button_questions.setOnClickListener {
             if (parentActivity is MainActivityActionListener) {
-                parentActivity.performAction("questions")
+                parentActivity.performAction("questions", "")
             }
         }
 

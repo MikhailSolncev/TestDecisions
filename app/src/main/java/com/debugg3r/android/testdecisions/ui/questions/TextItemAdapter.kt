@@ -4,26 +4,31 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.debugg3r.android.testdecisions.MainActivityActionListener
 import com.debugg3r.android.testdecisions.R
-import com.debugg3r.android.testdecisions.data.DataStoreDb
 import com.debugg3r.android.testdecisions.data.Question
 import com.debugg3r.android.testdecisions.data.TextItem
 import kotlinx.android.synthetic.main.question_list_item.view.*
 
-class QuestionsAdapter: RecyclerView.Adapter<QuestionsAdapter.QuestionViewHolder>() {
+class TextItemAdapter(mListener: MainActivityActionListener): RecyclerView.Adapter<TextItemAdapter.TextItemViewHolder>() {
 
     private val items = mutableListOf<TextItem>()
+    private val onEventListener = mListener
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): QuestionViewHolder {
+    init {
+        this.onEventListener
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TextItemViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.question_list_item, parent, false)
-        return QuestionViewHolder(view)
+        return TextItemViewHolder(view)
     }
 
     override fun getItemCount(): Int {
         return items.size
     }
 
-    override fun onBindViewHolder(holder: QuestionViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: TextItemViewHolder, position: Int) {
         holder.bind(items[position])
     }
 
@@ -33,8 +38,14 @@ class QuestionsAdapter: RecyclerView.Adapter<QuestionsAdapter.QuestionViewHolder
         notifyDataSetChanged()
     }
 
-    class QuestionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class TextItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
+        init {
+            itemView.setOnClickListener {
+                val element = items[layoutPosition]
+                onEventListener.performAction(if (element is Question) "question" else "answer", element.uid)
+            }
+        }
         fun bind(element: TextItem) {
             with(itemView) {
                 question_text.text = element.text
