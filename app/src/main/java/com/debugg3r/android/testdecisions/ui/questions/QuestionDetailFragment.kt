@@ -9,7 +9,9 @@ import android.view.ViewGroup
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.debugg3r.android.testdecisions.MainActivity
 
 import com.debugg3r.android.testdecisions.R
@@ -51,12 +53,6 @@ class QuestionDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        listAdapter = TextItemAdapter(activity as MainActivity)
-        with(recycler_answers) {
-            layoutManager = LinearLayoutManager(activity)
-            adapter = listAdapter
-        }
-
         val dataStoreDb = context?.let { DataStoreDb(it) }
 
         //question_text.setOnClickListener(OnTextItemEditTextListener(activity as MainActivity))
@@ -76,9 +72,32 @@ class QuestionDetailFragment : Fragment() {
             builder.show()
         }
 
+        listAdapter = TextItemAdapter(activity as MainActivity)
+        with(recycler_answers) {
+            layoutManager = LinearLayoutManager(activity)
+            adapter = listAdapter
+
+            val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+
+                override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
+                    return false
+                }
+                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, swipeDir: Int) {
+                    val question = dataStoreDb?.getQuestion(param)
+                    question?.let {
+                        val uid = (viewHolder as TextItemAdapter.TextItemViewHolder).uid
+                        it.findAnswer(uid)?.let { it1 -> dataStoreDb.removeAnswer(it, it1) }
+                        it.removeAnswer(uid)
+                        listAdapter.setData(it.getAnswers())
+                    }
+                }
+            })
+            itemTouchHelper.attachToRecyclerView(this)
+        }
+
         if (param == "new") {
             context?.let {
-                var question = Question(it.getString(R.string.new_question_hint))
+                var question = Question(it.getString(R.string.new_answer_hint))
                 param = question.uid
             }
 

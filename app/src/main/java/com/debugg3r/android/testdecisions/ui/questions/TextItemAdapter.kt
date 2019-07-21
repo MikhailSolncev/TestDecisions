@@ -46,7 +46,7 @@ class TextItemAdapter(mListener: MainActivityActionListener) : RecyclerView.Adap
     }
 
     inner class TextItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
+        public var uid: String = ""
         init {
 
             itemView.setOnClickListener {
@@ -84,6 +84,7 @@ class TextItemAdapter(mListener: MainActivityActionListener) : RecyclerView.Adap
                 if (element is Question) {
                     question_answers_count.text = element.getAnswers().size.toString()
                 }
+                uid = element.uid
             }
         }
     }

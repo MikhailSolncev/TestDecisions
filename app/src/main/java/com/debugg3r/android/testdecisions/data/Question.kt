@@ -17,4 +17,8 @@ data class Question(override var text: String, override val uid: String) : TextI
         var answer = answers.find { it.uid == uid }
         if (answer != null) answers.remove(answer)
     }
+
+    fun findAnswer(uid: String): Answer? {
+        return answers.find { it.uid == uid }
+    }
 }

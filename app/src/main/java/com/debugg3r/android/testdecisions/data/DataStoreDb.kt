@@ -97,6 +97,7 @@ class DataStoreDb(var mContext: Context): DataStore {
     }
 
     override fun removeQuestion(uid: String) {
+        if (questions.size == 0) readFromDb()
         if (findQuestion(Question("", uid))) {
             sqLiteDatabase.delete(DbContract.Questions.TABLE_NAME,
                     "${DbContract.Questions.COLUMN_ID} = ?",
