@@ -14,9 +14,26 @@ class MainActivity : AppCompatActivity(), MainActivityActionListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
         supportFragmentManager.inTransaction{
             replace(R.id.main_frame, MenuFragment())
         }
+    }
+
+    override fun onNavigateUp(): Boolean {
+        super.onNavigateUp()
+
+        return true
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        super.onSupportNavigateUp()
+        if (supportFragmentManager.backStackEntryCount > 0)
+            supportFragmentManager.popBackStack()
+        else
+            finish()
+        return true
     }
 
     override fun performAction(action: String, parameter: String) {
