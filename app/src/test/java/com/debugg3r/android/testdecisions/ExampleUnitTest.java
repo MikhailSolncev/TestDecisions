@@ -14,8 +14,6 @@ public class ExampleUnitTest {
     public void addition_isCorrect() {
         assertEquals(4, 2 + 2);
 
-        TestOdd testOdd = new TestOdd();
-        Integer arr[] = {1,2,3,4,5,65,66,67,68,69};
-        testOdd.printOdd(arr);
+
     }
 }

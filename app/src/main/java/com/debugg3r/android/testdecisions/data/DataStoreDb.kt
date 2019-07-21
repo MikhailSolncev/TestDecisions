@@ -129,7 +129,7 @@ class DataStoreDb(var mContext: Context): DataStore {
     }
 
     override fun changeAnswer(uidQuestion: String, uidAnswer: String, text: String) {
-        questions.first { it.uid == uidQuestion }.getAnswers().first { it.uid == uidAnswer }.text = text
+        //questions.first { it.uid == uidQuestion }.getAnswers().first { it.uid == uidAnswer }.text = text
         val sql = "update ${DbContract.Answers.TABLE_NAME} " +
                 "set ${DbContract.Answers.COLUMN_TEXT} = '$text' " +
                 "where ${DbContract.Answers.COLUMN_ID} = ? "

@@ -3,4 +3,7 @@
     <string name="text_nulis">0</string>
     <string name="descriptionButtonAdd">Add new question</string>
     <string name="button_questions_text">Questions</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
