@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
+import android.util.Log;
 
 import com.debugg3r.android.testdecisions.data.Answer;
 import com.debugg3r.android.testdecisions.data.DataStore;
@@ -23,6 +24,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -193,5 +197,38 @@ public class DataStoreDbTest {
         } catch (IllegalAccessException ex) {
             fail(ex.getMessage());
         }
+    }
+
+    @Test
+    public void getDecisionsTest() {
+        DataStoreDb dataStore = new DataStoreDb(mContext);
+
+        Question question = dataStore.addQuestion("two beer or not two beer");
+        assertNotNull("added question is null", question);
+
+        String uid = dataStore.addQuestion(new Question("two bee or not two bee"));
+        assertFalse("uid is empty", uid.isEmpty());
+
+        Question q2 = dataStore.getQuestion(uid);
+
+        Question q3 = dataStore.addQuestion("third");
+
+        dataStore.addAnswer(question, new Answer("yes"));
+        dataStore.addAnswer(question, new Answer("no"));
+
+        dataStore.addAnswer(q2, new Answer("maybe"));
+        dataStore.addAnswer(q2, new Answer("or maybe not"));
+
+        dataStore.addAnswer(q3, new Answer("third1"));
+        dataStore.addAnswer(q3, new Answer("third2"));
+
+        Map result = dataStore.getDecisions();
+
+        assertEquals("decision map isn't equal", 3, result.size());
+        assertEquals("Answers 1 isn't equal", 8, ((List)result.get(question)).size());
+        assertEquals("Answers 2 isn't equal", 8, ((List)result.get(q2)).size());
+        assertEquals("Answers 3 isn't equal", 8, ((List)result.get(q3)).size());
+
+        Log.d("TEST_DECISION", result.toString());
     }
 }

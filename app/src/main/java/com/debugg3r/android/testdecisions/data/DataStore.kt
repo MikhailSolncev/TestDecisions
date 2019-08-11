@@ -14,4 +14,6 @@ interface DataStore {
     fun changeQuestion(uid: String, text: String)
     fun changeAnswer(question: Question, answer: Answer, text: String)
     fun changeAnswer(uidQuestion: String, uidAnswer: String, text: String)
+
+    fun getDecisions(): Map<Question, List<Answer>>
 }

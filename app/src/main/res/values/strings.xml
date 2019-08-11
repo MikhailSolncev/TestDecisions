@@ -6,4 +6,8 @@
 
     <string name="new_answer_hint">New answer</string>
     <string name="new_question_hint">New question</string>
+    <string name="button_decision_text">Decisions</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

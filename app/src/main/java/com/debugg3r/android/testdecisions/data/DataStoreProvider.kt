@@ -5,6 +5,9 @@ import kotlin.IndexOutOfBoundsException
 import kotlin.collections.HashMap
 
 open class DataStoreProvider : DataStore  {
+    override fun getDecisions(): Map<Question, List<Answer>> {
+        return mapOf()
+    }
 
     private val questionMap = HashMap<String, Question>()
     private val questionList = LinkedList<Question>()

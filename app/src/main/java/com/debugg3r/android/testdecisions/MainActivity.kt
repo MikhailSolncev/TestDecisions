@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.debugg3r.android.testdecisions.ui.mainmenu.MenuFragment
 import com.debugg3r.android.testdecisions.ui.questions.QuestionDetailFragment
 import com.debugg3r.android.testdecisions.ui.questions.QuestionsFragment
+import com.debugg3r.android.testdecisions.ui.decisions.DecisionsFragment
 
 class MainActivity : AppCompatActivity(), MainActivityActionListener {
     private val LOG_TAG = this::class.java.simpleName
@@ -54,6 +55,12 @@ class MainActivity : AppCompatActivity(), MainActivityActionListener {
             }
             "answer" -> {
 
+            }
+            "decisions" -> {
+                supportFragmentManager.inTransaction {
+                    addToBackStack("main")
+                    replace(R.id.main_frame, DecisionsFragment.newInstance())
+                }
             }
             else -> {}
         }

@@ -30,6 +30,12 @@ class MenuFragment : Fragment() {
             }
         }
 
+        main_button_decision.setOnClickListener {
+            if (parentActivity is MainActivityActionListener) {
+                parentActivity.performAction("decisions", "")
+            }
+        }
+
         val task = Thread{
             val dataStore = parentActivity?.let { DataStoreDb(it) }
             val count = dataStore?.getCount()

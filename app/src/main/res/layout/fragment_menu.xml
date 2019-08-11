@@ -29,4 +29,15 @@
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintStart_toEndOf="@id/main_button_questions"
         app:layout_constraintTop_toTopOf="@id/main_button_questions" />
+
+    <Button
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/main_button_questions"
+        app:layout_constraintTop_toBottomOf="@id/main_button_questions"
+        app:layout_constraintEnd_toEndOf="@id/main_button_questions"
+        android:layout_marginTop="@dimen/control_margin"
+        android:text="@string/button_decision_text"
+        android:id="@+id/main_button_decision"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>

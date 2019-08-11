@@ -7,8 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
-import android.support.v4.widget.TextViewCompat;
-import android.util.Log;
 
 import com.debugg3r.android.testdecisions.data.Answer;
 import com.debugg3r.android.testdecisions.data.Question;

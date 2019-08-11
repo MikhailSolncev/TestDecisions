@@ -6,6 +6,7 @@ import com.debugg3r.android.testdecisions.data.sqlite.DbContract
 import com.debugg3r.android.testdecisions.data.sqlite.DbHelper
 
 class DataStoreDb(var mContext: Context): DataStore {
+
     val sqLiteDatabase = DbHelper(mContext).writableDatabase
     var questions = mutableListOf<Question>()
 
@@ -135,5 +136,49 @@ class DataStoreDb(var mContext: Context): DataStore {
                 "set ${DbContract.Answers.COLUMN_TEXT} = '$text' " +
                 "where ${DbContract.Answers.COLUMN_ID} = ? "
         sqLiteDatabase.execSQL(sql, arrayOf(uidAnswer))
+    }
+
+    override fun getDecisions(): Map<Question, List<Answer>> {
+        //if (questions.size == 0) readFromDb()
+        readFromDb()
+        val result = mutableMapOf<Question, MutableList<Answer>>()
+
+        fillDecisions(result, 0)
+
+        return result
+    }
+
+    fun fillDecisions(result: MutableMap<Question, MutableList<Answer>>, depth: Int): Int {
+        when (depth) {
+            questions.size -> {return 0}
+            questions.size - 1 -> {
+                val question = questions[depth]
+                if (result[question] == null)
+                    result[question] = mutableListOf<Answer>()
+                val answers = result[question]
+                val questionAnswers = question.getAnswers()
+                for (answer in questionAnswers)
+                    answers?.add(answer)
+
+                return questionAnswers.size
+            }
+            else -> {
+                val question = questions[depth]
+                if (result[question] == null)
+                    result[question] = mutableListOf<Answer>()
+                val answers = result[question]
+
+                var added = 0
+                for (answer in question.getAnswers()) {
+                    val subSize = fillDecisions(result, depth + 1)
+                    for (i in 1..subSize) {
+                        answers?.add(answer)
+                        added++
+                    }
+                }
+
+                return added
+            }
+        }
     }
 }
