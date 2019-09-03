@@ -3,4 +3,5 @@
     <dimen name="control_margin">8dp</dimen>
     <dimen name="textview_text_size">16sp</dimen>
     <dimen name="control_size">32dp</dimen>
+    <dimen name="floating_button_margin">32dp</dimen>
 </resources>

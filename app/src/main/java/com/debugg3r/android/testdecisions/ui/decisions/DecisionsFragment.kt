@@ -2,12 +2,10 @@ package com.debugg3r.android.testdecisions.ui.decisions
 
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.view.ContextThemeWrapper
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TableRow
 
@@ -50,18 +48,18 @@ class DecisionsFragment : Fragment() {
 
         //  header
         var tableRow = createTableRow()
-        tableRow.addText("Questions")
+        tableRow.addText("Questions", R.style.TableHeader)
         for (cnt in 1..(max))
-            tableRow.addText(cnt.toString())
+            tableRow.addText(cnt.toString(), R.style.TableHeader)
         decisions_table.addView(tableRow)
 
         //  rows
         for (pair in decisions) {
             //  row
             tableRow = createTableRow()
-            tableRow.addText(pair.key.text)
+            tableRow.addText(pair.key.text, R.style.TableRow)
             for (answer in pair.value)
-                tableRow.addText(answer.text)
+                tableRow.addText(answer.text, R.style.TableRow)
 
             decisions_table.addView(tableRow)
         }
@@ -75,14 +73,11 @@ class DecisionsFragment : Fragment() {
                 LinearLayout.LayoutParams.WRAP_CONTENT)
         params.topMargin = 9
         tableRow.layoutParams = params
-        tableRow.showDividers = TableRow.SHOW_DIVIDER_MIDDLE
-                .or(TableRow.SHOW_DIVIDER_BEGINNING)
-                .or(TableRow.SHOW_DIVIDER_END)
         return tableRow
     }
 
-    private fun TableRow.addText(text: String) {
-        val textView = TextView(context)
+    private fun TableRow.addText(text: String, style: Int) {
+        val textView = TextView(context, null, 0, style)
         textView.text = text
         textView.background = textviewBorder
         textView.setPadding(4)

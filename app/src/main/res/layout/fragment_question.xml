@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         android:id="@+id/question_text"
+        style="@style/ListHeader"
         />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -29,9 +30,9 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginVertical="32dp"
-        android:layout_marginHorizontal="32dp"
+        android:layout_margin="@dimen/floating_button_margin"
         android:clickable="true"
+        android:focusable="true"
         android:src="@android:drawable/ic_menu_add" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

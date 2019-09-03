@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity(), MainActivityActionListener {
     }
 
     override fun performAction(action: String, parameter: String) {
-        Toast.makeText(this, "Wow! Button \"$action\" pressed!", Toast.LENGTH_SHORT).show()
+        //Toast.makeText(this, "Wow! Button \"$action\" pressed!", Toast.LENGTH_SHORT).show()
 
         when (action) {
             "questions" -> {
