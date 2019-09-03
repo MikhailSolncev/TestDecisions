@@ -1,23 +1,26 @@
 package com.debugg3r.android.testdecisions.ui.decisions
 
-
+import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.view.ContextThemeWrapper
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TableLayout
+import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.TableRow
 
 import com.debugg3r.android.testdecisions.data.DataStoreDb
 import android.widget.TextView
-import androidx.appcompat.app.ActionBar
-import androidx.core.view.marginTop
+import androidx.core.view.setPadding
 import com.debugg3r.android.testdecisions.R
 import kotlinx.android.synthetic.main.fragment_decisions.*
 
 
 class DecisionsFragment : Fragment() {
+
+    var textviewBorder: Drawable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,21 +40,24 @@ class DecisionsFragment : Fragment() {
 
         if (context == null) return
 
+        context?.let { textviewBorder = it.getDrawable(R.drawable.textview_border)}
+
         val decisions = DataStoreDb(context!!).getDecisions()
 
         var max = 0
         if (decisions.isNotEmpty())
-            max = decisions[decisions.keys.first()]!!.size
+            max = decisions.getValue(decisions.keys.first()).size
 
         //  header
         var tableRow = createTableRow()
         tableRow.addText("Questions")
-        for (cnt in 1..(max+1))
+        for (cnt in 1..(max))
             tableRow.addText(cnt.toString())
         decisions_table.addView(tableRow)
 
         //  rows
         for (pair in decisions) {
+            //  row
             tableRow = createTableRow()
             tableRow.addText(pair.key.text)
             for (answer in pair.value)
@@ -59,21 +65,31 @@ class DecisionsFragment : Fragment() {
 
             decisions_table.addView(tableRow)
         }
+
+        //  horizontal separator
     }
 
     private fun createTableRow(): TableRow {
         val tableRow = TableRow(context)
-        val params = ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT,
-                ActionBar.LayoutParams.WRAP_CONTENT)
+        val params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT)
         params.topMargin = 9
         tableRow.layoutParams = params
+        tableRow.showDividers = TableRow.SHOW_DIVIDER_MIDDLE
+                .or(TableRow.SHOW_DIVIDER_BEGINNING)
+                .or(TableRow.SHOW_DIVIDER_END)
         return tableRow
     }
 
     private fun TableRow.addText(text: String) {
         val textView = TextView(context)
         textView.text = text
-        this.addView(textView)
+        textView.background = textviewBorder
+        textView.setPadding(4)
+        val params = TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
+                TableRow.LayoutParams.WRAP_CONTENT)
+        //params.setMargins(2, 2, 2, 2)
+        this.addView(textView, params)
     }
 
     companion object {
@@ -85,4 +101,5 @@ class DecisionsFragment : Fragment() {
                     }
                 }
     }
+
 }
