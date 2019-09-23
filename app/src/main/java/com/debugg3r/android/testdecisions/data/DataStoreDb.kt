@@ -5,60 +5,78 @@ import android.content.Context
 import com.debugg3r.android.testdecisions.data.sqlite.DbContract
 import com.debugg3r.android.testdecisions.data.sqlite.DbHelper
 
-class DataStoreDb(var mContext: Context): DataStore {
+
+class DataStoreDb(var mContext: Context) : DataStore {
+
+    companion object {
+        var instance: DataStoreDb? = null
+        fun getInstance(context: Context): DataStoreDb {
+            if (instance == null) {
+            }
+            instance = DataStoreDb(context)
+            return instance as DataStoreDb
+        }
+    }
 
     val sqLiteDatabase = DbHelper(mContext).writableDatabase
     var questions = mutableListOf<Question>()
 
-    private fun readFromDb() : MutableList<Question> {
+    private fun readFromDb(onlyEnabled: Boolean = false): MutableList<Question> {
         questions = mutableListOf<Question>()
-        var cursorQ = sqLiteDatabase.rawQuery(
-                "select " +
-                        "${DbContract.Questions.COLUMN_ID}," +
-                        "${DbContract.Questions.COLUMN_TEXT} " +
-                        "from ${DbContract.Questions.TABLE_NAME}", null)
-        if (cursorQ.moveToFirst())
+        val cursorQ = sqLiteDatabase.query(
+                DbContract.Questions.TABLE_NAME,
+                arrayOf(DbContract.Questions.COLUMN_ID, DbContract.Questions.COLUMN_TEXT),
+                null,
+                null,
+                null,
+                null,
+                null)
+
+        if (cursorQ.moveToFirst()) {
             do {
 
-                var question = Question(cursorQ.getString(1), cursorQ.getString(0))
+                val question = Question(cursorQ.getString(1), cursorQ.getString(0))
                 questions.add(question)
 
-                val cursorA = sqLiteDatabase.query(DbContract.Answers.TABLE_NAME,
-                        arrayOf(DbContract.Answers.COLUMN_ID, DbContract.Answers.COLUMN_TEXT),
-                        "${DbContract.Answers.COLUMN_QUESTION} = ?",
-                        arrayOf(question.uid),
-                        null,
-                        null,
-                        null)
+                val rawText = "SELECT ${DbContract.Answers.COLUMN_ID}, ${DbContract.Answers.COLUMN_TEXT} " +
+                        "FROM ${DbContract.Answers.TABLE_NAME} " +
+                        "WHERE ${DbContract.Answers.COLUMN_QUESTION} = ?" +
+                        " AND (? = '0' OR ${DbContract.Answers.COLUMN_ENABLED} = 1)"
+                val cursorA = sqLiteDatabase.rawQuery(rawText, arrayOf(question.uid, if (onlyEnabled) "1" else "0"))
 
-                if (cursorA.moveToFirst())
+                if (cursorA.moveToFirst()) {
                     do {
-                        var answer = Answer(cursorA.getString(1), cursorA.getString(0))
+                        val answer = Answer(cursorA.getString(1), cursorA.getString(0))
                         question.addAnswer(answer)
                     } while (cursorA.moveToNext())
+                }
 
             } while (cursorQ.moveToNext())
+        }
         return questions
     }
 
     override fun getQuestions(): Collection<Question> {
-        if (questions.isEmpty()) readFromDb()
+        //if (questions.isEmpty())
+        readFromDb()
         return questions.toSet()
     }
 
     override fun getQuestion(uid: String): Question {
-        if (questions.isEmpty()) readFromDb()
+        //if (questions.isEmpty())
+        readFromDb()
 
         val result = questions.filter { it.uid == uid }
-        if (result.isEmpty())
+        if (result.isEmpty()) {
             throw NoSuchElementException("Element with uid $uid not found")
+        }
         return result[0]
     }
 
     override fun getQuestion(position: Int): Question {
-        if (position > questions.size)
-            throw IndexOutOfBoundsException("Index $position out of bounds")
-        return questions[position]
+        if (position > questions.size) {
+        }
+        throw IndexOutOfBoundsException("Index $position out of bounds")
     }
 
     override fun addQuestion(question: Question): String {
@@ -81,11 +99,13 @@ class DataStoreDb(var mContext: Context): DataStore {
         values.put(DbContract.Answers.COLUMN_ID, answer.uid)
         values.put(DbContract.Answers.COLUMN_TEXT, answer.text)
         values.put(DbContract.Answers.COLUMN_QUESTION, question.uid)
+        values.put(DbContract.Answers.COLUMN_ENABLED, true)
         sqLiteDatabase.insert(DbContract.Answers.TABLE_NAME, null, values)
     }
 
     override fun getCount(): Int {
-        if (questions.isEmpty()) readFromDb()
+        //if (questions.isEmpty())
+        readFromDb()
         return questions.size
     }
 
@@ -98,7 +118,8 @@ class DataStoreDb(var mContext: Context): DataStore {
     }
 
     override fun removeQuestion(uid: String) {
-        if (questions.size == 0) readFromDb()
+        //if (questions.size == 0)
+        readFromDb()
         if (findQuestion(Question("", uid))) {
             sqLiteDatabase.delete(DbContract.Questions.TABLE_NAME,
                     "${DbContract.Questions.COLUMN_ID} = ?",
@@ -137,10 +158,16 @@ class DataStoreDb(var mContext: Context): DataStore {
                 "where ${DbContract.Answers.COLUMN_ID} = ? "
         sqLiteDatabase.execSQL(sql, arrayOf(uidAnswer))
     }
+    public fun changeAnswerEnabled(uid: String, enabled: Boolean){
+        val sql = "UPDATE ${DbContract.Answers.TABLE_NAME} " +
+                "set ${DbContract.Answers.COLUMN_ENABLED} = ? " +
+                "where ${DbContract.Answers.COLUMN_ID} = ? "
+        sqLiteDatabase.execSQL(sql, arrayOf(if (enabled) "1" else "2", uid))
+    }
 
     override fun getDecisions(): Map<Question, List<Answer>> {
         //if (questions.size == 0) readFromDb()
-        readFromDb()
+        readFromDb(true)
         val result = mutableMapOf<Question, MutableList<Answer>>()
 
         fillDecisions(result, 0)
@@ -150,22 +177,27 @@ class DataStoreDb(var mContext: Context): DataStore {
 
     fun fillDecisions(result: MutableMap<Question, MutableList<Answer>>, depth: Int): Int {
         when (depth) {
-            questions.size -> {return 0}
+            questions.size -> {
+                return 0
+            }
             questions.size - 1 -> {
                 val question = questions[depth]
-                if (result[question] == null)
-                    result[question] = mutableListOf<Answer>()
+                if (result[question] == null) {
+                }
+                result[question] = mutableListOf<Answer>()
                 val answers = result[question]
                 val questionAnswers = question.getAnswers()
-                for (answer in questionAnswers)
+                for (answer in questionAnswers) {
                     answers?.add(answer)
+                }
 
                 return questionAnswers.size
             }
             else -> {
                 val question = questions[depth]
-                if (result[question] == null)
-                    result[question] = mutableListOf<Answer>()
+                if (result[question] == null) {
+                }
+                result[question] = mutableListOf<Answer>()
                 val answers = result[question]
 
                 var added = 0

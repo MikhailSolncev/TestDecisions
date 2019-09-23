@@ -37,11 +37,14 @@ class MenuFragment : Fragment() {
         }
 
         val task = Thread{
-            val dataStore = parentActivity?.let { DataStoreDb(it) }
+            val dataStore = DataStoreDb.instance
             val count = dataStore?.getCount()
-            parentActivity?.runOnUiThread{
-                main_textview_questions.text = count.toString()
+            main_textview_questions?.let {
+                parentActivity?.runOnUiThread{
+                    it.text = count.toString()
+                }
             }
+
         }
         task.start()
     }

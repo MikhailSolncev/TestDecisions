@@ -8,9 +8,12 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/scroll_view_filter"
         android:scrollbars="vertical|horizontal"
-        android:scrollbarStyle="insideInset">
+        android:scrollbarStyle="insideInset"
+        android:id="@+id/scroll_view_decision">
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -28,5 +31,26 @@
             </TableLayout>
         </HorizontalScrollView>
     </ScrollView>
+
+   <ScrollView
+       android:layout_width="match_parent"
+       android:layout_height="0dp"
+       app:layout_constraintTop_toBottomOf="@id/scroll_view_decision"
+       app:layout_constraintBottom_toBottomOf="parent"
+       android:id="@+id/scroll_view_filter"
+       android:scrollbars="vertical|horizontal"
+       android:scrollbarStyle="insideInset">
+       <HorizontalScrollView
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:scrollbars="horizontal|vertical">
+           <TableLayout
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:id="@+id/decisions_filter"
+               android:showDividers="beginning|middle|end"
+               />
+       </HorizontalScrollView>
+   </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

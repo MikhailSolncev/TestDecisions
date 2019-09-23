@@ -3,6 +3,7 @@ package com.debugg3r.android.testdecisions
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.debugg3r.android.testdecisions.data.DataStoreDb
 import com.debugg3r.android.testdecisions.ui.mainmenu.MenuFragment
 import com.debugg3r.android.testdecisions.ui.questions.QuestionDetailFragment
 import com.debugg3r.android.testdecisions.ui.questions.QuestionsFragment
@@ -17,14 +18,16 @@ class MainActivity : AppCompatActivity(), MainActivityActionListener {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        supportFragmentManager.inTransaction{
-            replace(R.id.main_frame, MenuFragment())
-        }
+        DataStoreDb.getInstance(applicationContext)
+
+        if (savedInstanceState == null)
+            supportFragmentManager.inTransaction{
+                replace(R.id.main_frame, MenuFragment())
+            }
     }
 
     override fun onNavigateUp(): Boolean {
         super.onNavigateUp()
-
         return true
     }
 

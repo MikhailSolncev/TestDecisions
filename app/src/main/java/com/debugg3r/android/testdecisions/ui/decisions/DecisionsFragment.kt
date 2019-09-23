@@ -1,17 +1,20 @@
 package com.debugg3r.android.testdecisions.ui.decisions
 
+import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
+import android.widget.TextView
 import android.widget.LinearLayout
 import android.widget.TableRow
 
-import com.debugg3r.android.testdecisions.data.DataStoreDb
-import android.widget.TextView
+import androidx.fragment.app.Fragment
 import androidx.core.view.setPadding
+
+import com.debugg3r.android.testdecisions.data.DataStoreDb
 import com.debugg3r.android.testdecisions.R
 import kotlinx.android.synthetic.main.fragment_decisions.*
 
@@ -36,11 +39,19 @@ class DecisionsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (context == null) return
+        context?.let {
+            showDecisions(it)
+            showFilter(it)
+        }
 
-        context?.let { textviewBorder = it.getDrawable(R.drawable.textview_border)}
+    }
 
-        val decisions = DataStoreDb(context!!).getDecisions()
+    private fun showDecisions(context: Context) {
+        context.let { textviewBorder = it.getDrawable(R.drawable.textview_border)}
+
+        if (DataStoreDb.instance == null) return
+
+        val decisions = DataStoreDb.instance!!.getDecisions()
 
         var max = 0
         if (decisions.isNotEmpty())
@@ -63,8 +74,32 @@ class DecisionsFragment : Fragment() {
 
             decisions_table.addView(tableRow)
         }
+    }
 
-        //  horizontal separator
+    private fun showFilter(context: Context) {
+        context.let { textviewBorder = it.getDrawable(R.drawable.textview_border)}
+
+        if (DataStoreDb.instance == null) return
+
+        val questions = DataStoreDb.instance!!.getQuestions()
+        var max = 0
+        questions.map { max = Math.max(max, it.getAnswers().size) }
+
+        //  header
+        var tableRow = createTableRow()
+        tableRow.addText("Questions", R.style.TableHeader)
+        for (cnt in 1..(max))
+            tableRow.addText(cnt.toString(), R.style.TableHeader)
+        decisions_filter.addView(tableRow)
+
+        for (question in questions) {
+            tableRow = createTableRow()
+            tableRow.addText(question.text, R.style.TableRow)
+            for (answer in question.getAnswers()) {
+                tableRow.addCheckbox(answer.text, answer.uid)
+            }
+            decisions_filter.addView(tableRow)
+        }
     }
 
     private fun createTableRow(): TableRow {
@@ -82,9 +117,23 @@ class DecisionsFragment : Fragment() {
         textView.background = textviewBorder
         textView.setPadding(4)
         val params = TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
-                TableRow.LayoutParams.WRAP_CONTENT)
+                TableRow.LayoutParams.MATCH_PARENT)
         //params.setMargins(2, 2, 2, 2)
         this.addView(textView, params)
+    }
+
+    private fun TableRow.addCheckbox(text: String, uid: String) {
+        val checkBoxView = CheckBox(context)
+        checkBoxView.text = text
+        checkBoxView.setPadding(4)
+        checkBoxView.isChecked = true
+        checkBoxView.tag = uid
+        val params = TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
+                TableRow.LayoutParams.WRAP_CONTENT)
+        checkBoxView.setOnCheckedChangeListener { compoundButton, value ->
+            DataStoreDb.instance?.changeAnswerEnabled(compoundButton.tag as String, value)
+        }
+        this.addView(checkBoxView, params)
     }
 
     companion object {

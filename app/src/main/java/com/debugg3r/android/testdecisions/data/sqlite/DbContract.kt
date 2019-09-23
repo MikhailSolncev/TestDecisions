@@ -13,5 +13,6 @@ class DbContract : BaseColumns {
         val COLUMN_ID = "guid"
         val COLUMN_QUESTION = "question"
         val COLUMN_TEXT = "atext"
+        val COLUMN_ENABLED = "enabled"
     }
 }

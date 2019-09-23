@@ -53,7 +53,7 @@ class QuestionDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val dataStoreDb = context?.let { DataStoreDb(it) }
+        val dataStoreDb = DataStoreDb.instance
 
         //question_text.setOnClickListener(OnTextItemEditTextListener(activity as MainActivity))
         question_text.setOnClickListener {
@@ -116,8 +116,6 @@ class QuestionDetailFragment : Fragment() {
             builder.setPositiveButton("Save", { dialog, which ->
                 val question = dataStoreDb?.getQuestion(param)
                 dataStoreDb?.let { question?.let { it1 -> it.addAnswer(it1, Answer(editText.text.toString())) } }
-                //question_text.text = editText.text
-                //dataStoreDb?.changeQuestion(param, editText.text.toString())
                 question?.let { listAdapter.setData(it.getAnswers())}
             })
             builder.setNegativeButton("Cancel") { dialog, which ->

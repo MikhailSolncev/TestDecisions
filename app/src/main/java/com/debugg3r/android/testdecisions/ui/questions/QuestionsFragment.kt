@@ -19,10 +19,6 @@ import com.debugg3r.android.testdecisions.data.DataStoreDb
 import kotlinx.android.synthetic.main.fragment_questions.*
 import androidx.recyclerview.widget.RecyclerView
 
-
-
-
-
 class QuestionsFragment : Fragment() {
 
     lateinit var listAdapter: TextItemAdapter
@@ -36,6 +32,7 @@ class QuestionsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         super.onViewCreated(view, savedInstanceState)
+        val dataStoreDb = DataStoreDb.instance
 
         listAdapter = TextItemAdapter(context as MainActivity)
         with(recycler_questions) {
@@ -48,16 +45,16 @@ class QuestionsFragment : Fragment() {
                 }
 
                 override fun onSwiped(viewHolder: RecyclerView.ViewHolder, swipeDir: Int) {
-                    context?.let { DataStoreDb(it).removeQuestion((viewHolder as TextItemAdapter.TextItemViewHolder).uid) }
+                    context?.let { dataStoreDb?.removeQuestion((viewHolder as TextItemAdapter.TextItemViewHolder).uid) }
 
-                    val questions = context?.let { DataStoreDb(it).getQuestions() as Set }
+                    val questions = context?.let { dataStoreDb?.getQuestions() as Set }
                     questions?.let { listAdapter.setData(it.toList()) }
                 }
             })
             itemTouchHelper.attachToRecyclerView(this)
         }
 
-        val questions = context?.let { DataStoreDb(it).getQuestions() as Set }
+        val questions = context?.let { dataStoreDb?.getQuestions() as Set }
         questions?.let { listAdapter.setData(it.toList()) }
 
         question_add.setOnClickListener {
@@ -68,8 +65,8 @@ class QuestionsFragment : Fragment() {
             builder.setView(editText)
             builder.setPositiveButton("Save", { dialog, which ->
                 context?.let {
-                    val question = DataStoreDb(it).addQuestion(editText.text.toString())
-                    (it as MainActivity).performAction("question", question.uid)
+                    val question = dataStoreDb?.addQuestion(editText.text.toString())
+                    (it as MainActivity).performAction("question", question!!.uid)
                 }
             })
             builder.setNegativeButton("Cancel") { dialog, which ->

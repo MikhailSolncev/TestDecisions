@@ -3,6 +3,7 @@ package com.debugg3r.android.testdecisions;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.test.InstrumentationRegistry;
@@ -49,7 +50,7 @@ public class DataStoreDbTest {
 
     @Before
     public void setUp(){
-        deleteDatabase();
+        //deleteDatabase();
     }
 
     @Test
@@ -188,6 +189,7 @@ public class DataStoreDbTest {
     }
 
     void deleteDatabase() {
+
         try {
             Field f = mDbHelperClass.getDeclaredField("DATABASE_NAME");
             f.setAccessible(true);
@@ -231,4 +233,168 @@ public class DataStoreDbTest {
 
         Log.d("TEST_DECISION", result.toString());
     }
+
+    @Test
+    public void updateAnswers() {
+
+        String LOG_TAG = "SQL_TEST_UPDATE";
+        DbHelper dbHelper = new DbHelper(mContext);
+        SQLiteDatabase sqLiteDatabase = dbHelper.getWritableDatabase();
+
+        sqLiteDatabase.beginTransaction();
+        String answersName = DbContract.Answers.INSTANCE.getTABLE_NAME();
+        String columnEnabled = DbContract.Answers.INSTANCE.getCOLUMN_ENABLED();
+
+        String alterQuery = "ALTER TABLE " + answersName + " ADD COLUMN " + columnEnabled + " BOOL";
+        boolean sucs = false;
+//        try {
+//            sqLiteDatabase.execSQL(alterQuery);
+//            sucs = true;
+//        } catch (SQLException ex) {
+//            Log.e(LOG_TAG, ex.getMessage());
+//        }
+
+        //assertTrue("Add column at answers failed", sucs);
+
+        alterQuery = "UPDATE " + answersName + " SET " + columnEnabled + " = 'true'";
+        sucs = false;
+        try {
+            sqLiteDatabase.execSQL(alterQuery);
+            sucs = true;
+        } catch (SQLException ex) {
+            Log.e(LOG_TAG, ex.getMessage());
+        }
+
+        assertTrue("Update column 'Enabled' failed", sucs);
+
+        sqLiteDatabase.endTransaction();
+
+    }
+
+    private void fillDatabase(SQLiteDatabase sqLiteDatabase) {
+        ContentValues values = new ContentValues();
+        values.put("guid", "123");
+        values.put("atext", "first answer");
+        values.put("question", "1");
+        values.put("enabled", true);
+        sqLiteDatabase.insert("answers", null, values);
+
+        values.clear();
+        values.put("guid", "456");
+        values.put("atext", "first answer");
+        values.put("question", "1");
+        values.put("enabled", false);
+        sqLiteDatabase.insert("answers", null, values);
+    }
+
+    @Test
+    public void selectAnswersWorksFromQuestionCorrect() {
+        String LOG_TAG = "SQL_TEST_UPDATE";
+        DbHelper dbHelper = new DbHelper(mContext);
+        SQLiteDatabase sqLiteDatabase = dbHelper.getWritableDatabase();
+
+        sqLiteDatabase.beginTransaction();
+
+        fillDatabase(sqLiteDatabase);
+
+        //  SELECT ALL FROM 1 QUESTION
+
+        Cursor cursor = null;
+        String sql = "select * from answers where question = ?";
+
+        cursor = sqLiteDatabase.rawQuery(sql, new String[] {"1"});
+
+        assertNotEquals("Raw count is 0 !!!", 0, cursor.getCount());
+    }
+
+    @Test
+    public void selectAnswersWorksFromEnabledCorrect() {
+        String LOG_TAG = "SQL_TEST_UPDATE";
+        DbHelper dbHelper = new DbHelper(mContext);
+        SQLiteDatabase sqLiteDatabase = dbHelper.getWritableDatabase();
+        sqLiteDatabase.beginTransaction();
+
+        fillDatabase(sqLiteDatabase);
+
+        //  SELECT ALL FROM TRUE ANSWER
+        String sql = "select * from answers where enabled = $1";
+
+        Cursor cursor = sqLiteDatabase.rawQuery(sql, new String[] {"1"});
+
+        assertEquals("Raw count is not 1 !!!", 1, cursor.getCount());
+    }
+
+    @Test
+    public void selectAnswersWorksEnabledCorrect() {
+        String LOG_TAG = "SQL_TEST_UPDATE";
+        DbHelper dbHelper = new DbHelper(mContext);
+        SQLiteDatabase sqLiteDatabase = dbHelper.getWritableDatabase();
+        sqLiteDatabase.beginTransaction();
+
+        fillDatabase(sqLiteDatabase);
+
+        //  SELECT ALL FROM TRUE ANSWER
+        String sql = "select * from answers where enabled = 1";
+
+        Cursor cursor = sqLiteDatabase.rawQuery(sql, null);
+
+        assertEquals("Raw count is not 1 !!!", 1, cursor.getCount());
+    }
+
+    @Test
+    public void selectAnswersParametersWorks() {
+        String LOG_TAG = "SQL_TEST_UPDATE";
+        DbHelper dbHelper = new DbHelper(mContext);
+        SQLiteDatabase sqLiteDatabase = dbHelper.getWritableDatabase();
+
+        sqLiteDatabase.beginTransaction();
+
+        fillDatabase(sqLiteDatabase);
+
+        String sql = "SELECT guid, atext " +
+                "FROM answers " +
+                "WHERE question = ?" +
+                " AND (? = '0')";
+
+        Cursor cursor = null;
+        try {
+            cursor = sqLiteDatabase.rawQuery(sql, new String[] {"1", "0"});
+        } catch (SQLException ex) {
+            Log.e(LOG_TAG, ex.getMessage());
+        }
+
+        assertNotNull("Cursor is null", cursor);
+
+        assertEquals("Row count not 2", 2, cursor.getCount());
+
+    }
+
+    @Test
+    public void selectAnswersWorksOnlyEnabledCorrect() {
+        String LOG_TAG = "SQL_TEST_UPDATE";
+        DbHelper dbHelper = new DbHelper(mContext);
+        SQLiteDatabase sqLiteDatabase = dbHelper.getWritableDatabase();
+
+        sqLiteDatabase.beginTransaction();
+
+        fillDatabase(sqLiteDatabase);
+
+        String sql = "SELECT guid, atext " +
+                "FROM answers " +
+                "WHERE question = ?" +
+                " AND (? = 0 OR enabled = 1)";
+
+        Cursor cursor = null;
+        try {
+            cursor = sqLiteDatabase.rawQuery(sql, new String[] {"1", "0"});
+        } catch (SQLException ex) {
+            Log.e(LOG_TAG, ex.getMessage());
+        }
+
+        assertNotNull("Cursor is null", cursor);
+
+        assertEquals("Row count not 2", 2, cursor.getCount());
+
+    }
+
 }
