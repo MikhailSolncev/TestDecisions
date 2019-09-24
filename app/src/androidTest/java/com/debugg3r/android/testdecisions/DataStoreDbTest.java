@@ -205,6 +205,13 @@ public class DataStoreDbTest {
     public void getDecisionsTest() {
         DataStoreDb dataStore = new DataStoreDb(mContext);
 
+        List quest = dataStore.getQuestions();
+
+        SQLiteDatabase dbase = dataStore.getSqLiteDatabase();
+        dbase.beginTransaction();
+        dbase.rawQuery("delete from answers", null);
+        dbase.rawQuery("delete from questions", null);
+
         Question question = dataStore.addQuestion("two beer or not two beer");
         assertNotNull("added question is null", question);
 
@@ -232,6 +239,8 @@ public class DataStoreDbTest {
         assertEquals("Answers 3 isn't equal", 8, ((List)result.get(q3)).size());
 
         Log.d("TEST_DECISION", result.toString());
+
+        dbase.endTransaction();
     }
 
     @Test

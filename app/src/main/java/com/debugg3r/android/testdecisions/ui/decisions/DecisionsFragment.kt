@@ -96,7 +96,7 @@ class DecisionsFragment : Fragment() {
             tableRow = createTableRow()
             tableRow.addText(question.text, R.style.TableRow)
             for (answer in question.getAnswers()) {
-                tableRow.addCheckbox(answer.text, answer.uid)
+                tableRow.addCheckbox(answer.text, answer.uid, answer.enabled)
             }
             decisions_filter.addView(tableRow)
         }
@@ -122,11 +122,11 @@ class DecisionsFragment : Fragment() {
         this.addView(textView, params)
     }
 
-    private fun TableRow.addCheckbox(text: String, uid: String) {
+    private fun TableRow.addCheckbox(text: String, uid: String, enabled: Boolean) {
         val checkBoxView = CheckBox(context)
         checkBoxView.text = text
         checkBoxView.setPadding(4)
-        checkBoxView.isChecked = true
+        checkBoxView.isChecked = enabled
         checkBoxView.tag = uid
         val params = TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
                 TableRow.LayoutParams.WRAP_CONTENT)

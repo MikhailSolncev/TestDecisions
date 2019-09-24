@@ -38,7 +38,9 @@ class DataStoreDb(var mContext: Context) : DataStore {
                 val question = Question(cursorQ.getString(1), cursorQ.getString(0))
                 questions.add(question)
 
-                val rawText = "SELECT ${DbContract.Answers.COLUMN_ID}, ${DbContract.Answers.COLUMN_TEXT} " +
+                val rawText = "SELECT ${DbContract.Answers.COLUMN_ID}," +
+                        " ${DbContract.Answers.COLUMN_TEXT}, " +
+                        " ${DbContract.Answers.COLUMN_ENABLED} " +
                         "FROM ${DbContract.Answers.TABLE_NAME} " +
                         "WHERE ${DbContract.Answers.COLUMN_QUESTION} = ?" +
                         " AND (? = '0' OR ${DbContract.Answers.COLUMN_ENABLED} = 1)"
@@ -46,7 +48,9 @@ class DataStoreDb(var mContext: Context) : DataStore {
 
                 if (cursorA.moveToFirst()) {
                     do {
-                        val answer = Answer(cursorA.getString(1), cursorA.getString(0))
+                        val answer = Answer(cursorA.getString(1),
+                                cursorA.getString(0),
+                                cursorA.getInt(2) == 1)
                         question.addAnswer(answer)
                     } while (cursorA.moveToNext())
                 }
@@ -158,6 +162,7 @@ class DataStoreDb(var mContext: Context) : DataStore {
                 "where ${DbContract.Answers.COLUMN_ID} = ? "
         sqLiteDatabase.execSQL(sql, arrayOf(uidAnswer))
     }
+
     public fun changeAnswerEnabled(uid: String, enabled: Boolean){
         val sql = "UPDATE ${DbContract.Answers.TABLE_NAME} " +
                 "set ${DbContract.Answers.COLUMN_ENABLED} = ? " +
@@ -183,8 +188,8 @@ class DataStoreDb(var mContext: Context) : DataStore {
             questions.size - 1 -> {
                 val question = questions[depth]
                 if (result[question] == null) {
+                    result[question] = mutableListOf<Answer>()
                 }
-                result[question] = mutableListOf<Answer>()
                 val answers = result[question]
                 val questionAnswers = question.getAnswers()
                 for (answer in questionAnswers) {
@@ -196,8 +201,8 @@ class DataStoreDb(var mContext: Context) : DataStore {
             else -> {
                 val question = questions[depth]
                 if (result[question] == null) {
+                    result[question] = mutableListOf<Answer>()
                 }
-                result[question] = mutableListOf<Answer>()
                 val answers = result[question]
 
                 var added = 0
